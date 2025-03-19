@@ -32,8 +32,31 @@ Pod::Spec.new do |s|
     mkdir -p libs/
     rm -rf libs/ios
     mkdir -p libs/ios
-    cp -r "#{skiaPath}/libs/ios/libsksg.xcframework" libs/ios/
-    cp -r "#{skiaPath}/libs/ios/libskottie.xcframework" libs/ios/
+
+    copied_skg=false
+    copied_skottie=false
+
+    if [ -e "#{skiaPath}/libs/apple/libsksg.xcframework" ]; then
+      cp -r "#{skiaPath}/libs/apple/libsksg.xcframework" libs/ios/
+      copied_skg=true
+    fi
+    if [ -e "#{skiaPath}/libs/apple/libskottie.xcframework" ]; then
+      cp -r "#{skiaPath}/libs/apple/libskottie.xcframework" libs/ios/
+      copied_skottie=true
+    fi
+    if [ -e "#{skiaPath}/libs/ios/libskg.xcframework" ]; then
+      cp -r "#{skiaPath}/libs/ios/libskg.xcframework" libs/ios/
+      copied_skg=true
+    fi
+    if [ -e "#{skiaPath}/libs/ios/libskottie.xcframework" ]; then
+      cp -r "#{skiaPath}/libs/ios/libskottie.xcframework" libs/ios/
+      copied_skottie=true
+    fi
+
+    if [ "$copied_skg" = false ] || [ "$copied_skottie" = false ]; then
+      echo "Error: Both libskg.xcframework and libskottie.xcframework must be copied." >&2
+      exit 1
+    fi
   CMD
 
   s.ios.vendored_frameworks = [
